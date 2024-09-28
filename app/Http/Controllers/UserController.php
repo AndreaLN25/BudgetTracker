@@ -4,74 +4,72 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the users.
-     */
     public function index()
     {
-        return User::all();
+        $users = User::all();
+        return view('users.index', compact('users'));
     }
 
-    /**
-     * Store a newly created user in storage.
-     */
+    public function create()
+    {
+        return view('users.create');
+    }
+
     public function store(Request $request)
     {
+        // Validate the incoming request
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
+        // Create a new user
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => bcrypt($request->password),
         ]);
 
-        return response()->json($user, 201);
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
-    /**
-     * Display the specified user.
-     */
     public function show(User $user)
     {
-        return $user;
+        return view('users.show', compact('user'));
     }
 
-    /**
-     * Update the specified user in storage.
-     */
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+
     public function update(Request $request, User $user)
     {
+        // Validate the incoming request
         $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:8|confirmed',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user->update($request->only(['name', 'email']));
-
-        if ($request->has('password')) {
-            $user->password = Hash::make($request->password);
-            $user->save();
+        // Update the user details
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->password) {
+            $user->password = bcrypt($request->password);
         }
+        $user->save();
 
-        return response()->json($user);
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
-    /**
-     * Remove the specified user from storage.
-     */
     public function destroy(User $user)
     {
         $user->delete();
-        return response()->json(null, 204);
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

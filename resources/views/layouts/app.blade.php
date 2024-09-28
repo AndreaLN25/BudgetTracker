@@ -14,6 +14,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('categories.index') }}">Categories</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Users</a></li>
             </ul>
         </div>
     </nav>

@@ -3,17 +3,21 @@
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('home');
 });
 
-// Rutas para Expenses (Gastos)
+//Expenses
 Route::resource('expenses', ExpenseController::class);
 
-// Rutas para Incomes (Ingresos)
+//Incomes
 Route::resource('incomes', IncomeController::class);
 
-// Rutas para Categories (Categorías)
+//Categories
 Route::resource('categories', CategoryController::class);
+
+//Users
+Route::resource('users', UserController::class);
