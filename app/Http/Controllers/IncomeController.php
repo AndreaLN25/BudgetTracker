@@ -12,7 +12,17 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        return Income::all();
+        $incomes = Income::all();
+
+        return view('incomes.index', compact('incomes'));
+    }
+
+    /**
+     * Show the form for creating a new income.
+     */
+    public function create()
+    {
+        return view('incomes.create');
     }
 
     /**
@@ -30,7 +40,7 @@ class IncomeController extends Controller
 
         $income = Income::create($request->all());
 
-        return response()->json($income, 201);
+        return redirect()->route('incomes.index')->with('success', 'Income created successfully.');
     }
 
     /**
@@ -38,7 +48,15 @@ class IncomeController extends Controller
      */
     public function show(Income $income)
     {
-        return $income;
+        return view('incomes.show', compact('income'));
+    }
+
+    /**
+     * Show the form for editing the specified income.
+     */
+    public function edit(Income $income)
+    {
+        return view('incomes.edit', compact('income'));
     }
 
     /**
@@ -55,7 +73,7 @@ class IncomeController extends Controller
 
         $income->update($request->only(['category_id', 'amount', 'description', 'date']));
 
-        return response()->json($income);
+        return redirect()->route('incomes.index')->with('success', 'Income updated successfully.');
     }
 
     /**
@@ -64,6 +82,7 @@ class IncomeController extends Controller
     public function destroy(Income $income)
     {
         $income->delete();
-        return response()->json(null, 204);
+
+        return redirect()->route('incomes.index')->with('success', 'Income deleted successfully.');
     }
 }
