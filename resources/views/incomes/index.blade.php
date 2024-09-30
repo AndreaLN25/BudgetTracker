@@ -5,29 +5,30 @@
     <h1>Income List</h1>
     <a href="{{ route('incomes.create') }}" class="btn btn-success mb-3">Add Income</a>
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($incomes as $income)
+    @if ($incomes->isEmpty())
+        <div class="alert alert-warning">No incomes found.</div>
+    @else
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($incomes as $income)
                 <tr>
                     <td>{{ $income->category->name }}</td>
                     <td>{{ $income->amount }}</td>
                     <td>{{ $income->description }}</td>
-                    <td>{{ $income->date }}</td>
+                    <td>{{ \Carbon\Carbon::parse($income->date)->format('d-m-Y') }}</td>
                     <td>
                         <a href="{{ route('incomes.edit', $income->id) }}" class="btn btn-warning">Edit</a>
                         <form action="{{ route('incomes.destroy', $income->id) }}" method="POST" style="display: inline-block;">
@@ -37,8 +38,9 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 </div>
 @endsection

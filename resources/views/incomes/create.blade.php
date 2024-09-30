@@ -12,10 +12,13 @@
                 <input type="number" class="form-control" name="user_id" required>
             </div> --}}
 
-            <div class="form-group">
-                <label for="category_id">Category</label>
-                <input type="text" class="form-control" name="category_id" required>
-            </div>
+            <label for="category_id">Category</label>
+            <select class="form-control" name="category_id" required>
+                <option value="">Select Category</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
 
             <div class="form-group">
                 <label for="amount">Amount</label>

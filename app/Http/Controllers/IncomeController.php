@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Income;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,20 +11,19 @@ class IncomeController extends Controller
 {
     public function index()
     {
-        $incomes = Income::with('category') ->where('user_id', Auth::id()) ->get();
+        $incomes = Income::with('category')->where('user_id', Auth::id())->get();
         return view('incomes.index', compact('incomes'));
     }
 
     public function create()
     {
-        return view('incomes.create');
+        $categories = Category::all();
+        return view('incomes.create', compact('categories'));
     }
-
 
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
@@ -43,24 +42,25 @@ class IncomeController extends Controller
 
     public function edit(Income $income)
     {
-        if ($income->user_id !==  Auth::id()) {
+        if ($income->user_id !== Auth::id()) {
             abort(403);
         }
 
         $categories = Category::all();
-        return view('incomes.edit', compact('income', 'categories'));    }
+        return view('incomes.edit', compact('income', 'categories'));
+    }
 
     public function update(Request $request, Income $income)
     {
-        if ($income->user_id !==  Auth::id()) {
+        if ($income->user_id !== Auth::id()) {
             abort(403);
         }
 
         $request->validate([
-            'category_id' => 'sometimes|exists:categories,id',
-            'amount' => 'sometimes|numeric',
-            'description' => 'sometimes|string',
-            'date' => 'sometimes|date',
+            'category_id' => 'required|exists:categories,id',
+            'amount' => 'required|numeric',
+            'description' => 'nullable|string',
+            'date' => 'required|date',
         ]);
 
         $income->update($request->all());
@@ -70,9 +70,10 @@ class IncomeController extends Controller
 
     public function destroy(Income $income)
     {
-        if ($income->user_id !==  Auth::id()) {
+        if ($income->user_id !== Auth::id()) {
             abort(403);
         }
+
         $income->delete();
         return redirect()->route('incomes.index')->with('success', 'Income deleted successfully.');
     }
