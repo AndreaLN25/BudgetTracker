@@ -11,10 +11,18 @@
         <a class="navbar-brand" href="{{ url('/') }}">Budget Tracker</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('categories.index') }}">Categories</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Users</a></li>
+                @if(Auth::check())
+                    <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('categories.index') }}">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Users</a></li>
+                    <li class="nav-item">
+                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="nav-link btn btn-link" style="cursor: pointer;">Logout</button>
+                        </form>
+                    </li>
+                @endif
             </ul>
         </div>
     </nav>
