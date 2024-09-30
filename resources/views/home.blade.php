@@ -9,8 +9,8 @@
         <a href="{{ route('incomes.index') }}" class="btn btn-primary">View Incomes</a>
         <a href="{{ route('expenses.index') }}" class="btn btn-secondary">View Expenses</a>
     @else
-        <a href="{{ route('login') }}" class="btn btn-warning">Login</a>
-        <a href="{{ route('register') }}" class="btn btn-success">Register</a>
+        <a href="{{ route('login.store') }}" class="btn btn-warning">Login</a>
+        <a href="{{ route('register.store') }}" class="btn btn-success">Register</a>
     @endif
 </div>
 @endsection
