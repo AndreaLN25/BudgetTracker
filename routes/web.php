@@ -6,10 +6,9 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Ruta principal
 Route::get('/', function () {
-    return view('home'); // Vista principal
-});
+    return view('home');
+})->name('home');
 
 // Rutas de autenticación
 require __DIR__.'/auth.php'; // Incluye las rutas de autenticación generadas por Breeze

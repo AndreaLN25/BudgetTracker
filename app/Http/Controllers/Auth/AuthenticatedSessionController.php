@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -21,14 +21,23 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        return response()->json(['token' => $token], 200);
+        return redirect()->route('home');
     }
 
     public function destroy(Request $request)
     {
-        // Cerrar sesión y revocar el token
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
 
-        return response()->noContent();
+        if ($user) {
+            if ($user->currentAccessToken()) {
+                $user->currentAccessToken()->delete();
+            }
+
+            Auth::logout();
+
+            return redirect()->route('home');
+        }
+
+        return redirect()->route('home');
     }
 }

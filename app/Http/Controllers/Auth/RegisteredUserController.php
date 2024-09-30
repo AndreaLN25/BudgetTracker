@@ -2,33 +2,34 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
 {
-    public function store(LoginRequest $request)
+    public function store(Request $request): RedirectResponse
     {
-        // Autenticar al usuario
-        $credentials = $request->only('email', 'password');
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
 
-        if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Las credenciales son incorrectas.'], 401);
-        }
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-        // Regenerar el token de acceso
-        $user = Auth::user();
-        $token = $user->createToken('Personal Access Token')->plainTextToken;
+        event(new Registered($user));
 
-        return response()->json(['token' => $token], 200);
-    }
+        Auth::login($user);
 
-    public function destroy(Request $request)
-    {
-        // Cerrar sesión y revocar el token
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->noContent();
+        return redirect()->route('home');
     }
 }
