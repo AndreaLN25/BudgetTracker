@@ -17,7 +17,7 @@ class IncomeController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::where('type', 'income')->get();
         return view('incomes.create', compact('categories'));
     }
 

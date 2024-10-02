@@ -17,7 +17,7 @@ class ExpenseController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::where('type', 'expense')->get();
         return view('expenses.create', compact('categories'));
     }
 
