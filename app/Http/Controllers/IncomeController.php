@@ -9,12 +9,40 @@ use Illuminate\Support\Facades\Auth;
 
 class IncomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $incomes = Income::with('category')->where('user_id', Auth::id())->get();
+        $query = Income::with('category')->where('user_id', Auth::id());
+
+        if ($request->filled('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->date);
+        }
+
+        if ($request->filled('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+
+        if ($request->filled('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        $incomes = $query->get();
         $total = $incomes->sum('amount');
-        return view('incomes.index', compact('incomes','total'));
+
+        $categories = Category::where('type', 'income')->get();
+
+        return view('incomes.index', compact('incomes', 'total', 'categories'));
     }
+
+
+
 
     public function create()
     {

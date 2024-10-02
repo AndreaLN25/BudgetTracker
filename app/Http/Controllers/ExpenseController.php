@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
@@ -9,11 +8,38 @@ use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $expenses = Expense::with('category')->where('user_id', Auth::id())->get();
+        $query = Expense::with('category')->where('user_id', Auth::id());
+
+        // Apply filters based on the request parameters
+        if ($request->filled('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->date);
+        }
+
+        if ($request->filled('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+
+        if ($request->filled('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        $expenses = $query->get();
         $total = $expenses->sum('amount');
-        return view('expenses.index', compact('expenses','total'));
+
+        // Retrieve all categories for the filter dropdown
+        $categories = Category::where('type', 'expense')->get();
+
+        return view('expenses.index', compact('expenses', 'total', 'categories'));
     }
 
     public function create()
@@ -24,39 +50,17 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
+        // Validation and storing logic similar to incomes
         $request->validate([
-            'category_id' => ['nullable', 'string', function ($attribute, $value, $fail) {
-                    if ($value !== 'other' && !Category::where('id', $value)->exists()) {
-                        $fail('The selected category is invalid.');
-                    }
-                }
-            ],
-            'new_category' => 'nullable|string|max:255|required_if:category_id,other',
+            'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'date' => 'required|date',
         ]);
 
-        if ($request->category_id === 'other' && $request->new_category) {
-            $category = Category::create([
-                'name' => $request->new_category,
-                'type' => 'expense',
-                'user_id' => Auth::id(),
-            ]);
-
-            $request->merge(['category_id' => $category->id]);
-        }
-
-        $total = $request->amount;
-
-        Expense::create(array_merge($request->all(), ['user_id' => Auth::id(), 'total' => $total]));
+        Expense::create(array_merge($request->all(), ['user_id' => Auth::id()]));
 
         return redirect()->route('expenses.index')->with('success', 'Expense created successfully.');
-    }
-
-    public function show(Expense $expense)
-    {
-        return view('expense.show', compact('expense'));
     }
 
     public function edit(Expense $expense)
@@ -65,7 +69,7 @@ class ExpenseController extends Controller
             abort(403);
         }
 
-        $categories = Category::all();
+        $categories = Category::where('type', 'expense')->get();
         return view('expenses.edit', compact('expense', 'categories'));
     }
 
