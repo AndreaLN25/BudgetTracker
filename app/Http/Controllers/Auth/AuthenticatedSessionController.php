@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -10,14 +11,15 @@ class AuthenticatedSessionController extends Controller
 {
     public function store(LoginRequest $request)
     {
-        // Autenticar al usuario
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Las credenciales son incorrectas.'], 401);
+            return redirect()
+                ->back()
+                ->withInput($request->only('email'))
+                ->with('error', 'The credentials are incorrect.');
         }
 
-        // Regenerar el token de acceso
         $user = Auth::user();
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 

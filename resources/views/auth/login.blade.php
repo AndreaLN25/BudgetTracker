@@ -3,6 +3,13 @@
 @section('content')
 <div class="container">
     <h2>Login</h2>
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('login.store') }}">
         @csrf
         <div class="mb-3">
@@ -15,6 +22,6 @@
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
-    <p>No tienes una cuenta? <a href="{{ route('register.show') }}">Regístrate</a></p>
+    <p>Don't have an account? <a href="{{ route('register.show') }}">Register</a></p>
 </div>
 @endsection
