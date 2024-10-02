@@ -12,7 +12,8 @@ class ExpenseController extends Controller
     public function index()
     {
         $expenses = Expense::with('category')->where('user_id', Auth::id())->get();
-        return view('expenses.index', compact('expenses'));
+        $total = $expenses->sum('amount');
+        return view('expenses.index', compact('expenses','total'));
     }
 
     public function create()
@@ -46,7 +47,9 @@ class ExpenseController extends Controller
             $request->merge(['category_id' => $category->id]);
         }
 
-        Expense::create(array_merge($request->all(), ['user_id' => Auth::id()]));
+        $total = $request->amount;
+
+        Expense::create(array_merge($request->all(), ['user_id' => Auth::id(), 'total' => $total]));
 
         return redirect()->route('expenses.index')->with('success', 'Expense created successfully.');
     }

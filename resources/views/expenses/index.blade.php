@@ -41,6 +41,10 @@
                 @endforeach
             </tbody>
         </table>
+
+        <div class="alert alert-info">
+            <strong>Total: </strong>{{ $total }} 
+        </div>
     @endif
 </div>
 @endsection

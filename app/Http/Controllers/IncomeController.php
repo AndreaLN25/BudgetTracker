@@ -12,7 +12,8 @@ class IncomeController extends Controller
     public function index()
     {
         $incomes = Income::with('category')->where('user_id', Auth::id())->get();
-        return view('incomes.index', compact('incomes'));
+        $total = $incomes->sum('amount');
+        return view('incomes.index', compact('incomes','total'));
     }
 
     public function create()
@@ -46,7 +47,9 @@ class IncomeController extends Controller
             $request->merge(['category_id' => $category->id]);
         }
 
-        Income::create(array_merge($request->all(), ['user_id' => Auth::id()]));
+        $total = $request->amount;
+
+        Income::create(array_merge($request->all(), ['user_id' => Auth::id(), 'total' => $total]));
 
         return redirect()->route('incomes.index')->with('success', 'Income created successfully.');
     }
