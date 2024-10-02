@@ -1,5 +1,3 @@
-<!-- resources/views/dashboard/index.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
@@ -54,6 +52,116 @@
         </div>
     </div>
 
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>Income Distribution by Category</h3>
+            <canvas id="incomeChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Expense Distribution by Category</h3>
+            <canvas id="expenseChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>Trends Over Last 6 Months</h3>
+            <canvas id="trendsChart"></canvas>
+        </div>
+    </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+    const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+
+    const incomeData = {
+        labels: @json($incomeLabels),
+        datasets: [{
+            label: 'Income by Category',
+            data: @json($incomeData),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const expenseData = {
+        labels: @json($expenseLabels),
+        datasets: [{
+            label: 'Expenses by Category',
+            data: @json($expenseData),
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    };
+
+    const incomeChart = new Chart(incomeCtx, {
+        type: 'pie',
+        data: incomeData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        }
+    });
+
+    const expenseChart = new Chart(expenseCtx, {
+        type: 'pie',
+        data: expenseData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        }
+    });
+
+</script>
+
+<script>
+    const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+
+    const trendsData = {
+        labels: @json($months),
+        datasets: [
+            {
+                label: 'Income',
+                data: @json($incomeTrends),
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+            },
+            {
+                label: 'Expenses',
+                data: @json($expenseTrends),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+            },
+        ]
+    };
+
+    const trendsChart = new Chart(trendsCtx, {
+        type: 'line',
+        data: trendsData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        }
+    });
+</script>
+
 @endsection
