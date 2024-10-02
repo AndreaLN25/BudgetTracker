@@ -11,12 +11,16 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::resource('users', UserController::class); // CRUD de usuarios
+Route::resource('users', UserController::class); 
+
+Route::middleware(['auth', 'superadmin'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('admin.dashboard');
+    Route::get('/admin/home', [DashboardController::class, 'home'])->name('admin.home');
+});
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('expenses', ExpenseController::class); // CRUD de gastos
-    Route::resource('incomes', IncomeController::class); // CRUD de ingresos
-    Route::resource('categories', CategoryController::class); // CRUD de categorías
+    Route::resource('expenses', ExpenseController::class);
+    Route::resource('incomes', IncomeController::class);
+    Route::resource('categories', CategoryController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
 });

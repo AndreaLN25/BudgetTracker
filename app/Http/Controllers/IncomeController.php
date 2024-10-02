@@ -11,7 +11,11 @@ class IncomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Income::with('category')->where('user_id', Auth::id());
+        if (Auth::user()->isSuperAdmin()) {
+            $query = Income::with('category','user');
+        } else {
+            $query = Income::with('category','user')->where('user_id', Auth::id());
+        }
 
         if ($request->filled('search')) {
             $query->where('description', 'like', '%' . $request->search . '%');

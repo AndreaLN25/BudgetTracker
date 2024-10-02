@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\User;
 use App\Models\Income;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
@@ -91,5 +93,20 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->orderBy('month')
             ->get();
+    }
+
+    public function adminIndex()
+    {
+        $userCount = User::count();
+        $incomeCount = Income::count();
+        $expenseCount = Expense::count();
+        $categoryCount = Category::count();
+
+        return view('admin.dashboard', compact('userCount', 'incomeCount', 'expenseCount','categoryCount'));
+    }
+
+    public function home()
+    {
+        return view('admin.home');
     }
 }

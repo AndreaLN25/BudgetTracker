@@ -10,9 +10,12 @@ class ExpenseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Expense::with('category')->where('user_id', Auth::id());
+        if (Auth::user()->isSuperAdmin()) {
+            $query = Expense::with('category','user');
+        } else {
+            $query = Expense::with('category','user')->where('user_id', Auth::id());
+        }
 
-        // Apply filters based on the request parameters
         if ($request->filled('search')) {
             $query->where('description', 'like', '%' . $request->search . '%');
         }
@@ -36,7 +39,6 @@ class ExpenseController extends Controller
         $expenses = $query->get();
         $total = $expenses->sum('amount');
 
-        // Retrieve all categories for the filter dropdown
         $categories = Category::where('type', 'expense')->get();
 
         return view('expenses.index', compact('expenses', 'total', 'categories'));
@@ -50,7 +52,6 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
-        // Validation and storing logic similar to incomes
         $request->validate([
             'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric',

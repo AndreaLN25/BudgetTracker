@@ -23,7 +23,11 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        return redirect()->route('home');
+        if ($user->isSuperAdmin()) {
+            return redirect()->route('admin.dashboard'); 
+        } else {
+            return redirect()->route('home');
+        }
     }
 
     public function destroy(Request $request)
@@ -36,7 +40,6 @@ class AuthenticatedSessionController extends Controller
             }
 
             Auth::logout();
-
             return redirect()->route('home');
         }
 

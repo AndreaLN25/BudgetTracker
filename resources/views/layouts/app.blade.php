@@ -16,14 +16,11 @@
                 @if (Auth::check())
                     <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
-                    {{-- <li class="nav-item"><a class="nav-link" href="{{ route('categories.index') }}">Categories</a></li> --}}
-                    {{-- <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Users</a></li> --}}
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                    </ul>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
 
+                    @if (Auth::user()->isSuperAdmin())
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a></li>
+                    @endif
                 @endif
             </ul>
             <ul class="navbar-nav ms-auto">
