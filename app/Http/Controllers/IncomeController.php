@@ -24,11 +24,27 @@ class IncomeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => ['nullable', 'string', function ($attribute, $value, $fail) {
+                    if ($value !== 'other' && !Category::where('id', $value)->exists()) {
+                        $fail('The selected category is invalid.');
+                    }
+                }
+            ],
+            'new_category' => 'nullable|string|max:255|required_if:category_id,other',
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'date' => 'required|date',
         ]);
+
+        if ($request->category_id === 'other' && $request->new_category) {
+            $category = Category::create([
+                'name' => $request->new_category,
+                'type' => 'income',
+                'user_id' => Auth::id(),
+            ]);
+
+            $request->merge(['category_id' => $category->id]);
+        }
 
         Income::create(array_merge($request->all(), ['user_id' => Auth::id()]));
 

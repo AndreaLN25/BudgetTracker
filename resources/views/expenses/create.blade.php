@@ -7,19 +7,18 @@
         <form action="{{ route('expenses.store') }}" method="POST">
             @csrf
 
-{{--             <div class="form-group">
-                <label for="user_id">User</label>
-                <input type="number" class="form-control" name="user_id" required>
-            </div> --}}
+            <label for="category_id">Category</label>
+            <select class="form-control" name="category_id" id="category_id" required>
+                <option value="">Select Category</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+                <option value="other">Other</option>
+            </select>
 
-            <div class="form-group">
-                <label for="category_id">Category</label>
-                <select class="form-control" name="category_id" required>
-                    <option value="">Select Category</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+            <div class="form-group" id="new_category_group" style="display: none;">
+                <label for="new_category">New Category</label>
+                <input type="text" class="form-control" name="new_category" id="new_category">
             </div>
 
             <div class="form-group">
@@ -40,4 +39,15 @@
             <button type="submit" class="btn btn-success">Save</button>
         </form>
     </div>
+
+    <script>
+        document.getElementById('category_id').addEventListener('change', function () {
+            var newCategoryGroup = document.getElementById('new_category_group');
+            if (this.value === 'other') {
+                newCategoryGroup.style.display = 'block';
+            } else {
+                newCategoryGroup.style.display = 'none';
+            }
+        });
+    </script>
 @endsection
