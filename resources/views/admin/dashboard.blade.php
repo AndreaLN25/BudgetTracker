@@ -6,44 +6,45 @@
 
     <div class="row mb-4">
         <div class="col-md-3 mb-4">
-            <a href="{{ route('users.index') }}" class="card shadow-sm text-decoration-none">
-                <div class="card-body bg-info text-white text-center">
+            <a href="{{ route('users.index') }}" class="card shadow-sm text-decoration-none d-flex flex-column h-100 border border-dark">
+                <div class="card-body text-dark text-center d-flex flex-column justify-content-center flex-grow-1">
                     <h5 class="card-title">Total Users</h5>
                     <p class="card-text h2">{{ $userCount }}</p>
                 </div>
             </a>
         </div>
         <div class="col-md-3 mb-4">
-            <a href="{{ route('incomes.index') }}" class="card shadow-sm text-decoration-none">
-                <div class="card-body bg-success text-white text-center">
+            <a href="{{ route('incomes.index') }}" class="card shadow-sm text-decoration-none d-flex flex-column h-100 border border-dark">
+                <div class="card-body text-dark text-center d-flex flex-column justify-content-center flex-grow-1">
                     <h5 class="card-title">Total Income</h5>
                     <p class="card-text h2">${{ number_format($totalIncomes, 2) }}</p>
-                    <p class="card-text h2">Incomes Count: {{ $incomeCount }}</p>
+                    <div class="bg-light text-dark p-2 mt-2 rounded">
+                        <p class="card-text h5">Incomes Count: {{ $incomeCount }}</p>
+                    </div>
                 </div>
             </a>
         </div>
         <div class="col-md-3 mb-4">
-            <a href="{{ route('expenses.index') }}" class="card shadow-sm text-decoration-none">
-                <div class="card-body bg-danger text-white text-center">
+            <a href="{{ route('expenses.index') }}" class="card shadow-sm text-decoration-none d-flex flex-column h-100 border border-dark">
+                <div class="card-body text-dark text-center d-flex flex-column justify-content-center flex-grow-1">
                     <h5 class="card-title">Total Expenses</h5>
                     <p class="card-text h2">${{ number_format($totalExpenses, 2) }}</p>
-                    <p class="card-text h2">Expenses Count: {{ $expenseCount }}</p>
+                    <div class="bg-light text-dark p-2 mt-2 rounded">
+                        <p class="card-text h5">Expenses Count: {{ $expenseCount }}</p>
+                    </div>
                 </div>
             </a>
         </div>
         <div class="col-md-3 mb-4">
-            <a href="{{ route('categories.index') }}" class="card shadow-sm text-decoration-none">
-            <div class="card shadow-sm">
-                <div class="card-body bg-warning text-white text-center">
+            <a href="{{ route('categories.index') }}" class="card shadow-sm text-decoration-none d-flex flex-column h-100 border border-dark">
+                <div class="card-body text-dark text-center d-flex flex-column justify-content-center flex-grow-1">
                     <h5 class="card-title">Total Categories</h5>
                     <p class="card-text h2">{{ $categoryCount }}</p>
                 </div>
-            </div>
             </a>
         </div>
     </div>
-
-    <div class="row mb-4">
+    {{-- <div class="row mb-4">
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm">
                 <div class="card-body bg-secondary text-white text-center">
@@ -52,7 +53,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="row mt-5">
         <div class="col-md-12">
@@ -78,7 +79,7 @@
     <div class="row mt-5">
         <div class="col-md-12 text-center">
             <h3>User Distribution of Income and Expenses</h3>
-            <canvas id="userDistributionChart" width="600" height="400"></canvas>
+            <canvas id="userDistributionChart" width="600" height="400" style="cursor: pointer;"></canvas>
         </div>
     </div>
 </div>
@@ -186,12 +187,23 @@
                 }
             },
             plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((sum, val) => sum + val, 0);
+                            const percentage = ((value / total) * 100).toFixed(2) + '%';
+                            return `${label}: ${value} (${percentage}) - Click for details`;
+                        }
+                    }
+                },
                 legend: {
                     position: 'top',
                 },
             },
         }
     });
-
+    
 </script>
 @endsection
