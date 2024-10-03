@@ -66,8 +66,14 @@ class DashboardController extends Controller
             $users = User::with(['incomes', 'expenses'])->get();
             $userLabels = $users->pluck('name')->toArray();
             $userIds = $users->pluck('id')->toArray();
-            $userData = $users->map(function ($user) {
+            $userDataBalances = $users->map(function ($user) {
                 return $user->incomes->sum('amount') - $user->expenses->sum('amount');
+            })->toArray();
+            $userDataIncomes = $users->map(function ($user) {
+                return $user->incomes->sum('amount');
+            })->toArray();
+            $userDataExpenses = $users->map(function ($user) {
+                return $user->expenses->sum('amount');
             })->toArray();
 
             return view('admin.dashboard', compact(
@@ -93,8 +99,10 @@ class DashboardController extends Controller
                 'expenseCategoryData',
                 'expenseCategoryLabels',
                 'userLabels',
-                'userData',
-                'userIds'
+                'userDataBalances',
+                'userIds',
+                'userDataIncomes',
+                'userDataExpenses'
             ));
         }
 

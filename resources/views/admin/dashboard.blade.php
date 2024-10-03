@@ -104,6 +104,28 @@
         </div>
     </div>
 
+    <div class="row mt-5">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>User Incomes</h4>
+                </div>
+                <div class="card-body text-center">
+                    <canvas id="userIncomeChart" width="300" height="300" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>User Expenses</h4>
+                </div>
+                <div class="card-body text-center">
+                    <canvas id="userExpenseChart" width="300" height="300" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -167,19 +189,18 @@
     };
 
     const incomeExpenseRatioChart = new Chart(incomeExpenseRatioCtx, {
-    type: 'pie',
-    data: incomeExpenseRatioData,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false, 
-        plugins: {
-            legend: {
-                position: 'right',
+        type: 'pie',
+        data: incomeExpenseRatioData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
             },
-        },
-    }
-});
-
+        }
+    });
 
     // User Distribution Chart
     const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
@@ -187,7 +208,7 @@
         labels: @json($userLabels),
         datasets: [{
             label: 'User Income and Expenses',
-            data: @json($userData),
+            data: @json($userDataBalances),
             backgroundColor: [
                 'rgba(75, 192, 192, 0.5)',
                 'rgba(255, 99, 132, 0.5)',
@@ -224,6 +245,54 @@
                 },
                 legend: {
                     position: 'right',
+                },
+            },
+        }
+    });
+
+    // User Incomes Chart
+    const userIncomeCtx = document.getElementById('userIncomeChart').getContext('2d');
+    const userIncomeData = {
+        labels: @json($userLabels), // Usar los nombres de los usuarios
+        datasets: [{
+            label: 'User Incomes',
+            data: @json($userDataIncomes),
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        }]
+    };
+
+    const userIncomeChart = new Chart(userIncomeCtx, {
+        type: 'bar',
+        data: userIncomeData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+        }
+    });
+
+    // User Expenses Chart
+    const userExpenseCtx = document.getElementById('userExpenseChart').getContext('2d');
+    const userExpenseData = {
+        labels: @json($userLabels), // Usar los nombres de los usuarios
+        datasets: [{
+            label: 'User Expenses',
+            data: @json($userDataExpenses),
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        }]
+    };
+
+    const userExpenseChart = new Chart(userExpenseCtx, {
+        type: 'bar',
+        data: userExpenseData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
                 },
             },
         }
