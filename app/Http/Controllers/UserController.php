@@ -39,7 +39,14 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        $incomes = $user->incomes;
+        $expenses = $user->expenses;
+
+        $totalIncomes = $incomes->sum('amount');
+        $totalExpenses = $expenses->sum('amount');
+        $balance = $totalIncomes - $totalExpenses;
+
+        return view('users.show', compact('user', 'incomes', 'expenses', 'totalIncomes', 'totalExpenses', 'balance'));
     }
 
     public function edit(User $user)

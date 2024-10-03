@@ -79,12 +79,10 @@
             <canvas id="userDistributionChart" width="600" height="400"></canvas>
         </div>
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-
     // Income by Category Chart
     const incomeCategoryCtx = document.getElementById('incomeCategoryChart').getContext('2d');
     const incomeCategoryData = {
@@ -162,7 +160,7 @@
     const userDistributionData = {
         labels: @json($userLabels),
         datasets: [{
-            label: 'Income and Expenses by User',
+            label: 'User Income and Expenses',
             data: @json($userData),
             backgroundColor: [
                 'rgba(75, 192, 192, 0.5)',
@@ -177,6 +175,14 @@
         data: userDistributionData,
         options: {
             responsive: true,
+            onClick: (event) => {
+                const activePoints = userDistributionChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+                if (activePoints.length > 0) {
+                    const selectedIndex = activePoints[0].index;
+                    const userId = {{ json_encode($userIds) }}[selectedIndex];
+                    window.location.href = `/users/${userId}`;
+                }
+            },
             plugins: {
                 legend: {
                     position: 'top',

@@ -65,6 +65,7 @@ class DashboardController extends Controller
 
             $users = User::with(['incomes', 'expenses'])->get();
             $userLabels = $users->pluck('name')->toArray();
+            $userIds = $users->pluck('id')->toArray();
             $userData = $users->map(function ($user) {
                 return $user->incomes->sum('amount') - $user->expenses->sum('amount');
             })->toArray();
@@ -92,7 +93,8 @@ class DashboardController extends Controller
                 'expenseCategoryData',
                 'expenseCategoryLabels',
                 'userLabels',
-                'userData' 
+                'userData',
+                'userIds'
             ));
         }
 
