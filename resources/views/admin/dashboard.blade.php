@@ -39,6 +39,7 @@
                     <p class="card-text h2">{{ $categoryCount }}</p>
                 </div>
             </div>
+            </a>
         </div>
     </div>
 
