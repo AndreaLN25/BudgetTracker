@@ -32,6 +32,7 @@
             </a>
         </div>
         <div class="col-md-3 mb-4">
+            <a href="{{ route('categories.index') }}" class="card shadow-sm text-decoration-none">
             <div class="card shadow-sm">
                 <div class="card-body bg-warning text-white text-center">
                     <h5 class="card-title">Total Categories</h5>
