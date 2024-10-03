@@ -14,16 +14,12 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
                 @if (Auth::check())
-                    <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
-
                     @if (!Auth::user()->isSuperAdmin())
-                        <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
                     @endif
 
-                    @if (Auth::user()->isSuperAdmin())
-                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a></li>
-                    @endif
+                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
                 @endif
             </ul>
 
