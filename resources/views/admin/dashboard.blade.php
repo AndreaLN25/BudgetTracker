@@ -44,7 +44,7 @@
             </a>
         </div>
     </div>
-    {{-- <div class="row mb-4">
+        {{-- <div class="row mb-4">
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm">
                 <div class="card-body bg-secondary text-white text-center">
@@ -56,30 +56,27 @@
     </div> --}}
 
     <div class="row mt-5">
-        <div class="col-md-12">
-            <h3 class="text-center">Distribution of Income and Expenses by Category</h3>
-            <div class="row">
-                <div class="col-md-6 mb-4">
-                    <canvas id="incomeCategoryChart" width="600" height="400"></canvas>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <canvas id="expenseCategoryChart" width="600" height="400"></canvas>
-                </div>
-            </div>
+        <div class="col-md-12 text-center mb-4">
+            <h3>Distribution by Category</h3>
+        </div>
+        <div class="col-md-6 mb-4 text-center">
+            <h4>Distribution of Income by Category</h4>
+            <canvas id="incomeCategoryChart" width="400" height="300"></canvas>
+        </div>
+        <div class="col-md-6 mb-4 text-center">
+            <h4>Distribution of Expenses by Category</h4>
+            <canvas id="expenseCategoryChart" width="400" height="300"></canvas>
         </div>
     </div>
 
     <div class="row mt-5">
-        <div class="col-md-12 text-center">
-            <h3>Income and Expense Ratio</h3>
-            <canvas id="incomeExpenseRatioChart" width="400" height="300"></canvas>
+        <div class="col-md-6 mb-4 text-center">
+            <h4>Income and Expense Ratio</h4>
+            <canvas id="incomeExpenseRatioChart" width="400" height="300" style="max-width: 100%;"></canvas>
         </div>
-    </div>
-
-    <div class="row mt-5">
-        <div class="col-md-12 text-center">
-            <h3>User Distribution of Income and Expenses</h3>
-            <canvas id="userDistributionChart" width="600" height="400" style="cursor: pointer;"></canvas>
+        <div class="col-md-6 mb-4 text-center">
+            <h4>User Distribution of Income and Expenses</h4>
+            <canvas id="userDistributionChart" width="400" height="300" style="max-width: 100%; cursor: pointer;"></canvas>
         </div>
     </div>
 </div>
@@ -204,6 +201,5 @@
             },
         }
     });
-    
 </script>
 @endsection
