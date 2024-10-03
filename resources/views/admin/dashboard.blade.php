@@ -59,27 +59,51 @@
         <div class="col-md-12 text-center mb-4">
             <h3>Distribution by Category</h3>
         </div>
-        <div class="col-md-6 mb-4 text-center">
-            <h4>Distribution of Income by Category</h4>
-            <canvas id="incomeCategoryChart" width="400" height="300"></canvas>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>Distribution of Income by Category</h4>
+                </div>
+                <div class="card-body text-center">
+                    <canvas id="incomeCategoryChart" width="300" height="300" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6 mb-4 text-center">
-            <h4>Distribution of Expenses by Category</h4>
-            <canvas id="expenseCategoryChart" width="400" height="300"></canvas>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>Distribution of Expenses by Category</h4>
+                </div>
+                <div class="card-body text-center">
+                    <canvas id="expenseCategoryChart" width="300" height="300" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row mt-5">
-        <div class="col-md-6 mb-4 text-center">
-            <h4>Income and Expense Ratio</h4>
-            <canvas id="incomeExpenseRatioChart" width="400" height="300" style="max-width: 100%;"></canvas>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>Income and Expense Ratio</h4>
+                </div>
+                <div class="card-body text-center">
+                    <canvas id="incomeExpenseRatioChart" width="300" height="300" style="max-width: 100%;"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6 mb-4 text-center">
-            <h4>User Distribution of Income and Expenses</h4>
-            <canvas id="userDistributionChart" width="400" height="300" style="max-width: 100%; cursor: pointer;"></canvas>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>User Distribution of Income and Expenses</h4>
+                </div>
+                <div class="card-body text-center">
+                    <canvas id="userDistributionChart" width="300" height="300" style="max-width: 100%; cursor: pointer;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -143,17 +167,19 @@
     };
 
     const incomeExpenseRatioChart = new Chart(incomeExpenseRatioCtx, {
-        type: 'pie',
-        data: incomeExpenseRatioData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
+    type: 'pie',
+    data: incomeExpenseRatioData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false, 
+        plugins: {
+            legend: {
+                position: 'right',
             },
-        }
-    });
+        },
+    }
+});
+
 
     // User Distribution Chart
     const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
@@ -175,6 +201,7 @@
         data: userDistributionData,
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             onClick: (event) => {
                 const activePoints = userDistributionChart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
                 if (activePoints.length > 0) {
@@ -196,7 +223,7 @@
                     }
                 },
                 legend: {
-                    position: 'top',
+                    position: 'right',
                 },
             },
         }
