@@ -127,6 +127,8 @@
         </div>
     </div>
 
+    <div style="margin-bottom: 250px;"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Income by Category Chart
@@ -194,6 +196,16 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            onClick: (event) => {
+                const activePoints = incomeExpenseRatioChart.getElementsAtEventForMode(event, 'nearest', {
+                    intersect: true
+                }, false);
+                if (activePoints.length > 0) {
+                    // Redirigir a la vista del Income and Expense Ratio
+                    window.location.href =
+                    "{{ route('income_expense_ratio') }}"; // Cambia esto a la ruta adecuada si es necesario
+                }
+            },
             plugins: {
                 legend: {
                     position: 'right',
@@ -287,7 +299,7 @@
     // User Expenses Chart
     const userExpenseCtx = document.getElementById('userExpenseChart').getContext('2d');
     const userExpenseData = {
-        labels: @json($userLabels), 
+        labels: @json($userLabels),
         datasets: [{
             label: 'User Expenses',
             data: @json($userDataExpenses),

@@ -25,4 +25,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/users/{id}/incomes', [DashboardController::class, 'showUserIncomes'])->name('users.incomes');
     Route::get('/users/{id}/expenses', [DashboardController::class, 'showUserExpenses'])->name('users.expenses');
+    Route::get('/ratio', [DashboardController::class, 'showIncomeExpenseRatio'])->name('income_expense_ratio');
+
 });

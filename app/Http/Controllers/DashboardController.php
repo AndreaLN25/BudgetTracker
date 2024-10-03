@@ -205,4 +205,11 @@ class DashboardController extends Controller
 
         return view('users.expenses', compact('user', 'expenses', 'categories'));
     }
+    public function showIncomeExpenseRatio()
+    {
+        $totalIncomes = Income::sum('amount');
+        $totalExpenses = Expense::sum('amount');
+
+        return view('ratio.income_expense_ratio', compact('totalIncomes', 'totalExpenses'));
+    }
 }
