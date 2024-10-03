@@ -253,7 +253,7 @@
     // User Incomes Chart
     const userIncomeCtx = document.getElementById('userIncomeChart').getContext('2d');
     const userIncomeData = {
-        labels: @json($userLabels), // Usar los nombres de los usuarios
+        labels: @json($userLabels),
         datasets: [{
             label: 'User Incomes',
             data: @json($userDataIncomes),
@@ -271,13 +271,23 @@
                     position: 'top',
                 },
             },
+            onClick: (event) => {
+                const activePoints = userIncomeChart.getElementsAtEventForMode(event, 'nearest', {
+                    intersect: true
+                }, false);
+                if (activePoints.length > 0) {
+                    const selectedIndex = activePoints[0].index;
+                    const userId = {{ json_encode($userIds) }}[selectedIndex]; // Obtener el ID del usuario correspondiente
+                    window.location.href = `/users/${userId}/incomes`; // Redirigir a la vista de ingresos del usuario
+                }
+            }
         }
     });
 
     // User Expenses Chart
     const userExpenseCtx = document.getElementById('userExpenseChart').getContext('2d');
     const userExpenseData = {
-        labels: @json($userLabels), // Usar los nombres de los usuarios
+        labels: @json($userLabels), 
         datasets: [{
             label: 'User Expenses',
             data: @json($userDataExpenses),
@@ -295,6 +305,16 @@
                     position: 'top',
                 },
             },
+            onClick: (event) => {
+                const activePoints = userExpenseChart.getElementsAtEventForMode(event, 'nearest', {
+                    intersect: true
+                }, false);
+                if (activePoints.length > 0) {
+                    const selectedIndex = activePoints[0].index;
+                    const userId = {{ json_encode($userIds) }}[selectedIndex]; // Obtener el ID del usuario correspondiente
+                    window.location.href = `/users/${userId}/expenses`; // Redirigir a la vista de gastos del usuario
+                }
+            }
         }
     });
 </script>

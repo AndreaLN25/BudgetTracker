@@ -172,4 +172,37 @@ class DashboardController extends Controller
     {
         return view('admin.home');
     }
+
+    public function showUserIncomes($id)
+    {
+        $user = User::findOrFail($id);
+        $categories = Category::all();
+
+        $query = $user->incomes();
+
+        if ($categoryId = request('category')) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $incomes = $query->get();
+
+        return view('users.incomes', compact('user', 'incomes', 'categories'));
+    }
+
+
+    public function showUserExpenses($id)
+    {
+        $user = User::findOrFail($id);
+        $categories = Category::all();
+
+        $query = $user->expenses();
+
+        if ($categoryId = request('category')) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $expenses = $query->get();
+
+        return view('users.expenses', compact('user', 'expenses', 'categories'));
+    }
 }
