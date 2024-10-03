@@ -33,6 +33,69 @@ class DashboardController extends Controller
         $expenseTrends = $monthlyExpenses->pluck('total')->toArray();
         $months = $monthlyIncomes->pluck('month')->toArray();
 
+        if (Auth::user()->isSuperAdmin()) {
+            $userCount = User::count();
+            $totalIncomes = Income::sum('amount');
+            $totalExpenses = Expense::sum('amount');
+            $incomeCount = Income::count();
+            $expenseCount = Expense::count();
+            $categoryCount = Category::count();
+
+            $incomeCategories = Income::with('category')
+                ->select('category_id', DB::raw('SUM(amount) as total'))
+                ->groupBy('category_id')
+                ->get();
+
+            $expenseCategories = Expense::with('category')
+                ->select('category_id', DB::raw('SUM(amount) as total'))
+                ->groupBy('category_id')
+                ->get();
+
+            $incomeCategoryLabels = $incomeCategories->pluck('category.name')->toArray();
+            $incomeCategoryData = $incomeCategories->pluck('total')->toArray();
+
+            $expenseCategoryLabels = $expenseCategories->pluck('category.name')->toArray();
+            $expenseCategoryData = $expenseCategories->pluck('total')->toArray();
+
+            $activeUsers = User::whereHas('incomes', function ($query) {
+                $query->where('date', '>=', now()->subMonth());
+            })->orWhereHas('expenses', function ($query) {
+                $query->where('date', '>=', now()->subMonth());
+            })->count();
+
+            $users = User::with(['incomes', 'expenses'])->get();
+            $userLabels = $users->pluck('name')->toArray();
+            $userData = $users->map(function ($user) {
+                return $user->incomes->sum('amount') - $user->expenses->sum('amount');
+            })->toArray();
+
+            return view('admin.dashboard', compact(
+                'incomes',
+                'expenses',
+                'balance',
+                'incomeData',
+                'incomeLabels',
+                'expenseData',
+                'expenseLabels',
+                'incomeTrends',
+                'expenseTrends',
+                'months',
+                'userCount',
+                'totalIncomes',
+                'totalExpenses',
+                'incomeCount',
+                'expenseCount',
+                'categoryCount',
+                'activeUsers',
+                'incomeCategoryData',
+                'incomeCategoryLabels',
+                'expenseCategoryData',
+                'expenseCategoryLabels',
+                'userLabels',
+                'userData' 
+            ));
+        }
+
         return view('dashboard.index', compact(
             'incomes',
             'expenses',
@@ -93,16 +156,6 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->orderBy('month')
             ->get();
-    }
-
-    public function adminIndex()
-    {
-        $userCount = User::count();
-        $incomeCount = Income::count();
-        $expenseCount = Expense::count();
-        $categoryCount = Category::count();
-
-        return view('admin.dashboard', compact('userCount', 'incomeCount', 'expenseCount','categoryCount'));
     }
 
     public function home()

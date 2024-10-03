@@ -16,13 +16,17 @@
                 @if (Auth::check())
                     <li class="nav-item"><a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
+
+                    @if (!Auth::user()->isSuperAdmin())
+                        <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
+                    @endif
 
                     @if (Auth::user()->isSuperAdmin())
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a></li>
                     @endif
                 @endif
             </ul>
+
             <ul class="navbar-nav ms-auto">
                 @if (Auth::check())
                     <li class="nav-item">

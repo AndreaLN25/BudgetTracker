@@ -11,10 +11,10 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::resource('users', UserController::class); 
+Route::resource('users', UserController::class);
 
 Route::middleware(['auth', 'superadmin'])->group(function () {
-    Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/home', [DashboardController::class, 'home'])->name('admin.home');
 });
 
