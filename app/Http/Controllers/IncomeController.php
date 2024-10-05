@@ -121,7 +121,7 @@ class IncomeController extends Controller
 
     public function destroy(Income $income)
     {
-        if ($income->user_id !== Auth::id()) {
+        if ($income->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
             abort(403);
         }
 

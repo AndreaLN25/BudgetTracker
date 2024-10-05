@@ -94,7 +94,7 @@ class ExpenseController extends Controller
 
     public function destroy(Expense $expense)
     {
-        if ($expense->user_id !== Auth::id()) {
+        if ($expense->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
             abort(403);
         }
 
