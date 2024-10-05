@@ -23,8 +23,11 @@ class DashboardController extends Controller
 
         $incomeData = $incomeCategories->pluck('total')->toArray();
         $incomeLabels = $incomeCategories->pluck('category.name')->toArray();
+        $incomeCategoryIds = $incomeCategories->pluck('category_id')->toArray();
+
         $expenseData = $expenseCategories->pluck('total')->toArray();
         $expenseLabels = $expenseCategories->pluck('category.name')->toArray();
+        $expenseCategoryIds = $expenseCategories->pluck('category_id')->toArray();
 
         $monthlyIncomes = $this->getMonthlyData(Income::class, $userId);
         $monthlyExpenses = $this->getMonthlyData(Expense::class, $userId);
@@ -36,16 +39,19 @@ class DashboardController extends Controller
         if (Auth::user()->isSuperAdmin()) {
             $adminDashboardData = $this->getAdminDashboardData();
             return view('admin.dashboard', array_merge([
-                'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels',
-                'expenseData', 'expenseLabels', 'incomeTrends', 'expenseTrends', 'months'
+                'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels', 'incomeCategoryIds',
+                'expenseData', 'expenseLabels', 'expenseCategoryIds',
+                'incomeTrends', 'expenseTrends', 'months'
             ], $adminDashboardData));
         }
 
         return view('dashboard.index', compact(
-            'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels',
-            'expenseData', 'expenseLabels', 'incomeTrends', 'expenseTrends', 'months'
+            'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels', 'incomeCategoryIds',
+            'expenseData', 'expenseLabels', 'expenseCategoryIds',
+            'incomeTrends', 'expenseTrends', 'months'
         ));
     }
+
 
     private function getTotalIncomes($userId)
     {
@@ -62,7 +68,7 @@ class DashboardController extends Controller
         return $model::with('category')
             ->when($userId, fn($query) => $query->where('user_id', $userId))
             ->when($type, fn($query) => $query->whereHas('category', function ($q) use ($type) {
-                $q->where('type', $type);  // Filtra por tipo de categoría
+                $q->where('type', $type);  
             }))
             ->select('category_id', DB::raw('SUM(amount) as total'))
             ->groupBy('category_id')
@@ -114,8 +120,10 @@ class DashboardController extends Controller
             'activeUsers' => $activeUsers,
             'incomeCategoryData' => $incomeCategories->pluck('total')->toArray(),
             'incomeCategoryLabels' => $incomeCategories->pluck('category.name')->toArray(),
+            'incomeCategoryIds' => $incomeCategories->pluck('category_id')->toArray(),
             'expenseCategoryData' => $expenseCategories->pluck('total')->toArray(),
             'expenseCategoryLabels' => $expenseCategories->pluck('category.name')->toArray(),
+            'expenseCategoryIds' => $expenseCategories->pluck('category_id')->toArray(),
             'userLabels' => $userLabels,
             'userIds' => $userIds,
             'userDataBalances' => $userDataBalances,
@@ -165,4 +173,19 @@ class DashboardController extends Controller
 
         return view('ratio.income_expense_ratio', compact('totalIncomes', 'totalExpenses'));
     }
+
+    public function showIncomesByCategory($categoryId)
+{
+    $incomes = Income::where('category_id', $categoryId)->get();
+    $category = Category::findOrFail($categoryId);
+    return view('incomes.by_category', compact('incomes', 'category'));
+}
+
+public function showExpensesByCategory($categoryId)
+{
+    $expenses = Expense::where('category_id', $categoryId)->get();
+    $category = Category::findOrFail($categoryId);
+    return view('expenses.by_category', compact('expenses', 'category'));
+}
+
 }
