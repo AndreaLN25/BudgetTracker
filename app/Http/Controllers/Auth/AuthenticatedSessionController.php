@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
         if ($user->isSuperAdmin()) {
-            return redirect()->route('admin.dashboard'); 
+            return redirect()->route('home');
         } else {
             return redirect()->route('home');
         }
