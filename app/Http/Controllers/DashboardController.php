@@ -18,105 +18,32 @@ class DashboardController extends Controller
         $expenses = $this->getTotalExpenses($userId);
         $balance = $incomes - $expenses;
 
-        $incomeCategories = $this->getIncomeCategories($userId);
-        $expenseCategories = $this->getExpenseCategories($userId);
+        $incomeCategories = $this->getCategoriesData(Income::class, $userId, 'income');
+        $expenseCategories = $this->getCategoriesData(Expense::class, $userId, 'expense');
 
         $incomeData = $incomeCategories->pluck('total')->toArray();
         $incomeLabels = $incomeCategories->pluck('category.name')->toArray();
         $expenseData = $expenseCategories->pluck('total')->toArray();
         $expenseLabels = $expenseCategories->pluck('category.name')->toArray();
 
-        $monthlyIncomes = $this->getMonthlyIncomes($userId);
-        $monthlyExpenses = $this->getMonthlyExpenses($userId);
+        $monthlyIncomes = $this->getMonthlyData(Income::class, $userId);
+        $monthlyExpenses = $this->getMonthlyData(Expense::class, $userId);
 
         $incomeTrends = $monthlyIncomes->pluck('total')->toArray();
         $expenseTrends = $monthlyExpenses->pluck('total')->toArray();
         $months = $monthlyIncomes->pluck('month')->toArray();
 
         if (Auth::user()->isSuperAdmin()) {
-            $userCount = User::count();
-            $totalIncomes = Income::sum('amount');
-            $totalExpenses = Expense::sum('amount');
-            $incomeCount = Income::count();
-            $expenseCount = Expense::count();
-            $categoryCount = Category::count();
-
-            $incomeCategories = Income::with('category')
-                ->select('category_id', DB::raw('SUM(amount) as total'))
-                ->groupBy('category_id')
-                ->get();
-
-            $expenseCategories = Expense::with('category')
-                ->select('category_id', DB::raw('SUM(amount) as total'))
-                ->groupBy('category_id')
-                ->get();
-
-            $incomeCategoryLabels = $incomeCategories->pluck('category.name')->toArray();
-            $incomeCategoryData = $incomeCategories->pluck('total')->toArray();
-
-            $expenseCategoryLabels = $expenseCategories->pluck('category.name')->toArray();
-            $expenseCategoryData = $expenseCategories->pluck('total')->toArray();
-
-            $activeUsers = User::whereHas('incomes', function ($query) {
-                $query->where('date', '>=', now()->subMonth());
-            })->orWhereHas('expenses', function ($query) {
-                $query->where('date', '>=', now()->subMonth());
-            })->count();
-
-            $users = User::with(['incomes', 'expenses'])->get();
-            $userLabels = $users->pluck('name')->toArray();
-            $userIds = $users->pluck('id')->toArray();
-            $userDataBalances = $users->map(function ($user) {
-                return $user->incomes->sum('amount') - $user->expenses->sum('amount');
-            })->toArray();
-            $userDataIncomes = $users->map(function ($user) {
-                return $user->incomes->sum('amount');
-            })->toArray();
-            $userDataExpenses = $users->map(function ($user) {
-                return $user->expenses->sum('amount');
-            })->toArray();
-
-            return view('admin.dashboard', compact(
-                'incomes',
-                'expenses',
-                'balance',
-                'incomeData',
-                'incomeLabels',
-                'expenseData',
-                'expenseLabels',
-                'incomeTrends',
-                'expenseTrends',
-                'months',
-                'userCount',
-                'totalIncomes',
-                'totalExpenses',
-                'incomeCount',
-                'expenseCount',
-                'categoryCount',
-                'activeUsers',
-                'incomeCategoryData',
-                'incomeCategoryLabels',
-                'expenseCategoryData',
-                'expenseCategoryLabels',
-                'userLabels',
-                'userDataBalances',
-                'userIds',
-                'userDataIncomes',
-                'userDataExpenses'
-            ));
+            $adminDashboardData = $this->getAdminDashboardData();
+            return view('admin.dashboard', array_merge([
+                'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels',
+                'expenseData', 'expenseLabels', 'incomeTrends', 'expenseTrends', 'months'
+            ], $adminDashboardData));
         }
 
         return view('dashboard.index', compact(
-            'incomes',
-            'expenses',
-            'balance',
-            'incomeData',
-            'incomeLabels',
-            'expenseData',
-            'expenseLabels',
-            'incomeTrends',
-            'expenseTrends',
-            'months'
+            'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels',
+            'expenseData', 'expenseLabels', 'incomeTrends', 'expenseTrends', 'months'
         ));
     }
 
@@ -130,81 +57,107 @@ class DashboardController extends Controller
         return Expense::where('user_id', $userId)->sum('amount');
     }
 
-    private function getIncomeCategories($userId)
+    private function getCategoriesData($model, $userId = null, $type = null)
     {
-        return Income::with('category')
-            ->where('user_id', $userId)
+        return $model::with('category')
+            ->when($userId, fn($query) => $query->where('user_id', $userId))
+            ->when($type, fn($query) => $query->whereHas('category', function ($q) use ($type) {
+                $q->where('type', $type);  // Filtra por tipo de categoría
+            }))
             ->select('category_id', DB::raw('SUM(amount) as total'))
             ->groupBy('category_id')
             ->get();
     }
 
-    private function getExpenseCategories($userId)
-    {
-        return Expense::with('category')
-            ->where('user_id', $userId)
-            ->select('category_id', DB::raw('SUM(amount) as total'))
-            ->groupBy('category_id')
-            ->get();
-    }
 
-    private function getMonthlyIncomes($userId)
+    private function getMonthlyData($model, $userId)
     {
-        return Income::where('user_id', $userId)
-            ->select(DB::raw('MONTH(date) as month'), DB::raw('SUM(amount) as total'))
+        return $model::where('user_id', $userId)
+            ->select(DB::raw('DATE_FORMAT(date, "%Y-%m") as month'), DB::raw('SUM(amount) as total'))
             ->where('date', '>=', now()->subMonths(6))
             ->groupBy('month')
             ->orderBy('month')
             ->get();
     }
 
-    private function getMonthlyExpenses($userId)
+    private function getAdminDashboardData()
     {
-        return Expense::where('user_id', $userId)
-            ->select(DB::raw('MONTH(date) as month'), DB::raw('SUM(amount) as total'))
-            ->where('date', '>=', now()->subMonths(6))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-    }
+        $userCount = User::count();
+        $totalIncomes = Income::sum('amount');
+        $totalExpenses = Expense::sum('amount');
+        $incomeCount = Income::count();
+        $expenseCount = Expense::count();
+        $categoryCount = Category::count();
+        $activeUsers = User::whereHas('incomes', function ($query) {
+            $query->where('date', '>=', now()->subMonth());
+        })->orWhereHas('expenses', function ($query) {
+            $query->where('date', '>=', now()->subMonth());
+        })->count();
 
-    public function home()
-    {
-        return view('admin.home');
+        $users = User::with(['incomes', 'expenses'])->get();
+        $userLabels = $users->pluck('name')->toArray();
+        $userIds = $users->pluck('id')->toArray();
+        $userDataBalances = $users->map(fn($user) => $user->incomes->sum('amount') - $user->expenses->sum('amount'))->toArray();
+        $userDataIncomes = $users->map(fn($user) => $user->incomes->sum('amount'))->toArray();
+        $userDataExpenses = $users->map(fn($user) => $user->expenses->sum('amount'))->toArray();
+
+        $incomeCategories = $this->getCategoriesData(Income::class, null, 'income');
+        $expenseCategories = $this->getCategoriesData(Expense::class, null, 'expense');
+
+        return [
+            'userCount' => $userCount,
+            'totalIncomes' => $totalIncomes,
+            'totalExpenses' => $totalExpenses,
+            'incomeCount' => $incomeCount,
+            'expenseCount' => $expenseCount,
+            'categoryCount' => $categoryCount,
+            'activeUsers' => $activeUsers,
+            'incomeCategoryData' => $incomeCategories->pluck('total')->toArray(),
+            'incomeCategoryLabels' => $incomeCategories->pluck('category.name')->toArray(),
+            'expenseCategoryData' => $expenseCategories->pluck('total')->toArray(),
+            'expenseCategoryLabels' => $expenseCategories->pluck('category.name')->toArray(),
+            'userLabels' => $userLabels,
+            'userIds' => $userIds,
+            'userDataBalances' => $userDataBalances,
+            'userDataIncomes' => $userDataIncomes,
+            'userDataExpenses' => $userDataExpenses
+        ];
     }
 
     public function showUserIncomes($id)
     {
         $user = User::findOrFail($id);
         $categories = Category::all();
+        request()->validate([
+            'category' => 'nullable|exists:categories,id',
+        ]);
 
-        $query = $user->incomes();
-
-        if ($categoryId = request('category')) {
-            $query->where('category_id', $categoryId);
-        }
-
-        $incomes = $query->get();
+        $incomes = $user->incomes()
+            ->when(request('category'), function ($query) {
+                $query->where('category_id', request('category'));
+            })
+            ->get();
 
         return view('users.incomes', compact('user', 'incomes', 'categories'));
     }
-
 
     public function showUserExpenses($id)
     {
         $user = User::findOrFail($id);
         $categories = Category::all();
+        request()->validate([
+            'category' => 'nullable|exists:categories,id',
+        ]);
 
-        $query = $user->expenses();
-
-        if ($categoryId = request('category')) {
-            $query->where('category_id', $categoryId);
-        }
-
-        $expenses = $query->get();
+        $expenses = $user->expenses()
+            ->when(request('category'), function ($query) {
+                $query->where('category_id', request('category'));
+            })
+            ->get();
 
         return view('users.expenses', compact('user', 'expenses', 'categories'));
     }
+
     public function showIncomeExpenseRatio()
     {
         $totalIncomes = Income::sum('amount');
