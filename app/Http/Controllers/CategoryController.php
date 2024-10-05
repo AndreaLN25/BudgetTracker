@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $categories = Category::all();
+        $query = Category::query();
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $categories = $query->get();
+
         return view('categories.index', compact('categories'));
     }
 

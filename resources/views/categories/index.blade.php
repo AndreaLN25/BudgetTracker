@@ -10,6 +10,22 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <form method="GET" action="{{ route('categories.index') }}" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <select name="type" class="form-control">
+                    <option value="">All Types</option>
+                    <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Income</option>
+                    <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Expense</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{{ route('categories.index') }}" class="btn btn-secondary">Reset Filters</a>
+            </div>
+        </div>
+    </form>
+
     <table class="table table-bordered">
         <thead>
             <tr>
