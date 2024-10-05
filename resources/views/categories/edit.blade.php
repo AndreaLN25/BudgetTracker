@@ -4,6 +4,7 @@
 <div class="container">
     <h1>Edit Category</h1>
 
+    <a href="{{ route('categories.index') }}" class="btn btn-secondary mb-3">Back to Categories</a>
     <form action="{{ route('categories.update', $category->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -21,7 +22,7 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="submit" class="btn btn-primary mt-3">Update</button>
     </form>
 </div>
 @endsection

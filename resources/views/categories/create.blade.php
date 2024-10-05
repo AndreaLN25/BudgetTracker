@@ -4,6 +4,7 @@
 <div class="container">
     <h1>Add Category</h1>
 
+    <a href="{{ route('categories.index') }}" class="btn btn-secondary mb-3">Back to Categories</a>
     <form action="{{ route('categories.store') }}" method="POST">
         @csrf
 
@@ -20,7 +21,7 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-success">Save</button>
+        <button type="submit" class="btn btn-success mt-3">Save</button>
     </form>
 </div>
 @endsection

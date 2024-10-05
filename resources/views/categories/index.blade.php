@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h1>Category List</h1>
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
     <a href="{{ route('categories.create') }}" class="btn btn-primary mb-3">Add Category</a>
 
     @if(session('success'))
