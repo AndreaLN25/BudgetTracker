@@ -93,7 +93,7 @@ class IncomeController extends Controller
 
     public function edit(Income $income)
     {
-        if ($income->user_id !== Auth::id()) {
+        if ($income->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
             abort(403);
         }
 
@@ -103,7 +103,7 @@ class IncomeController extends Controller
 
     public function update(Request $request, Income $income)
     {
-        if ($income->user_id !== Auth::id()) {
+        if ($income->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
             abort(403);
         }
 

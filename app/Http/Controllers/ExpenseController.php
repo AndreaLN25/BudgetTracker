@@ -66,7 +66,7 @@ class ExpenseController extends Controller
 
     public function edit(Expense $expense)
     {
-        if ($expense->user_id !== Auth::id()) {
+        if ($expense->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
             abort(403);
         }
 
@@ -76,7 +76,7 @@ class ExpenseController extends Controller
 
     public function update(Request $request, Expense $expense)
     {
-        if ($expense->user_id !== Auth::id()) {
+        if ($expense->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
             abort(403);
         }
 
