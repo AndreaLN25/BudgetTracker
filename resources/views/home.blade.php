@@ -1,19 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="jumbotron text-center">
-    <h1>Welcome to the Budget Tracker</h1>
-    <p>
-        @if(Auth::check() && Auth::user()->isSuperAdmin())
-            Manage users, incomes, and expenses with ease
-        @else
-            Manage your incomes and expenses easily
-        @endif
-    </p>
+<style>
+    .mt-250 {
+        margin-top: 200px; 
+    }
+</style>
+
+<div class="jumbotron text-center {{ Auth::check() ? '' : 'mt-250' }}">
+    @if(Auth::check())
+        <h1>Welcome, {{ Auth::user()->name }}!</h1>
+        <p>
+            @if(Auth::user()->isSuperAdmin())
+                Manage users, incomes, and expenses with ease.
+            @else
+                Manage your incomes and expenses easily.
+            @endif
+        </p>
+    @else
+        <h1>Welcome to the Budget Tracker</h1>
+        <p>Please log in to start managing your finances.</p>
+    @endif
 </div>
 
 <div class="container">
-    <div class="row mb-4">
+    <div class="row mb-4 d-flex justify-content-center">
         @if(Auth::check() && Auth::user()->isSuperAdmin())
             <div class="col-md-4 mb-4">
                 <a href="{{ route('users.index') }}" class="card shadow-sm text-decoration-none border border-dark">
@@ -25,7 +36,7 @@
             </div>
         @endif
 
-        @if(Auth::check()) <!-- Verifica si el usuario está logueado antes de mostrar los enlaces de ingresos y gastos -->
+        @if(Auth::check())
             <div class="col-md-4 mb-4">
                 <a href="{{ route('incomes.index') }}" class="card shadow-sm text-decoration-none border border-dark">
                     <div class="card-body text-dark text-center">
@@ -46,7 +57,7 @@
         @endif
     </div>
 
-    <div class="row mb-4">
+    <div class="row mb-4 d-flex justify-content-center">
         @if(Auth::check() && Auth::user()->isSuperAdmin())
             <div class="col-md-4 mb-4">
                 <a href="{{ route('categories.index') }}" class="card shadow-sm text-decoration-none border border-dark">

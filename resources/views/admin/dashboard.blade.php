@@ -127,8 +127,6 @@
         </div>
     </div>
 
-    <div style="margin-bottom: 250px;"></div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Income by Category Chart

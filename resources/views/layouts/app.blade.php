@@ -13,6 +13,7 @@
             flex-direction: column;
             min-height: 100vh;
             margin: 0;
+            margin-bottom: 150px;
         }
 
         nav {
