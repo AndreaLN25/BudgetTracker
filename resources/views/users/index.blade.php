@@ -3,6 +3,8 @@
 @section('content')
 <div class="container">
     <h1>User List</h1>
+
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a> 
     <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Add User</a>
 
     @if(session('success'))

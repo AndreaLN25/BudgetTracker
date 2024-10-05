@@ -8,6 +8,7 @@
 <div class="container mt-4">
     <h1 class="mb-4">{{ $user->name }}'s Expenses</h1>
 
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
     <form method="GET" action="{{ route('users.expenses', $user->id) }}" class="mb-3">
         <div class="form-group">
             <label for="categoryFilter">Filter by Category</label>

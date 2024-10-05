@@ -8,13 +8,14 @@
 <div class="container mt-4">
     <h1 class="mb-4">{{ $user->name }}'s Incomes</h1>
 
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
     <form method="GET" action="{{ route('users.incomes', $user->id) }}" class="mb-3">
         <div class="form-group">
             <label for="categoryFilter">Filter by Category</label>
             <select name="category_id" id="categoryFilter" class="form-control" onchange="this.form.submit()">
                 <option value="">All Categories</option>
                 @foreach ($categories as $category)
-                    @if ($category->type === 'income') 
+                    @if ($category->type === 'income')
                         <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
                             {{ $category->name }}
                         </option>

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mt-4">
     <h1 class="text-center mb-4">User Details</h1>
-
+    <a href="{{ route('users.index') }}" class="btn btn-secondary mb-3">Back to User List</a> 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h5 class="card-title">{{ $user->name }}</h5>
@@ -68,8 +68,5 @@
         </div>
     </div>
 
-    <div class="text-center">
-        <a href="{{ route('users.index') }}" class="btn btn-primary">Back to Users List</a>
-    </div>
 </div>
 @endsection

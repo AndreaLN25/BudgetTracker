@@ -4,6 +4,7 @@
 <div class="container">
     <h1>Edit User</h1>
 
+    <a href="{{ route('users.index') }}" class="btn btn-secondary mb-3">Back to User List</a>
     <form action="{{ route('users.update', $user->id) }}" method="POST">
         @csrf
         @method('PUT')
