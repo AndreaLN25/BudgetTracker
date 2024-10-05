@@ -55,6 +55,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                                <a href="{{ route('expenses.index') }}" class="btn btn-secondary btn-block">Reset Filters</a>
                             </div>
                         </div>
                     </form>
