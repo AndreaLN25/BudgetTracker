@@ -4,6 +4,8 @@
 <div class="container">
     <h1>Incomes for the category: {{ $category->name }}</h1>
 
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a> 
+
     @if($incomes->isEmpty())
         <p>No incomes recorded in this category.</p>
     @else

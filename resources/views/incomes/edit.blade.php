@@ -4,6 +4,12 @@
     <div class="container">
         <h1>Edit Income</h1>
 
+        @if (auth()->user()->isSuperAdmin())
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+        @else
+            <a href="{{ route('home') }}" class="btn btn-secondary mb-3">Back to Home</a>
+        @endif
+
         <form action="{{ route('incomes.update', $income->id) }}" method="POST">
             @csrf
             @method('PUT')

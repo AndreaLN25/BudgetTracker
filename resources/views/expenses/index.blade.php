@@ -3,6 +3,13 @@
 @section('content')
     <div class="container">
         <h1>Expense List</h1>
+
+        @if (auth()->user()->isSuperAdmin())
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+        @else
+            <a href="{{ route('home') }}" class="btn btn-secondary mb-3">Back to Home</a>
+        @endif
+
         <a href="{{ route('expenses.create') }}" class="btn btn-success mb-3">Add Expense</a>
 
         @if (session('success'))

@@ -4,6 +4,12 @@
     <div class="container">
         <h1>Add Income</h1>
 
+        @if (auth()->user()->isSuperAdmin())
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+        @else
+            <a href="{{ route('home') }}" class="btn btn-secondary mb-3">Back to Home</a>
+        @endif
+
         <form action="{{ route('incomes.store') }}" method="POST">
             @csrf
 
@@ -41,7 +47,7 @@
     </div>
 
     <script>
-        document.getElementById('category_id').addEventListener('change', function () {
+        document.getElementById('category_id').addEventListener('change', function() {
             var newCategoryGroup = document.getElementById('new_category_group');
             if (this.value === 'other') {
                 newCategoryGroup.style.display = 'block';
