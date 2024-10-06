@@ -40,12 +40,15 @@
                 <td>{{ $category->name }}</td>
                 <td>{{ $category->type }}</td>
                 <td>
-                    <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    <div class="d-flex flex-column flex-md-row justify-content-center">
+                        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning btn-sm mb-2 mb-md-0 me-md-2">Edit</a>
+                        <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach

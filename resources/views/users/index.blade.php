@@ -4,7 +4,7 @@
 <div class="container">
     <h1>User List</h1>
 
-    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a> 
+    <a href="{{ route('dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
     <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Add User</a>
 
     @if(session('success'))
@@ -25,12 +25,15 @@
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>
-                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
+                    <div class="d-flex flex-column flex-md-row justify-content-center">
+                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm mb-2 mb-md-0 me-md-2">Edit</a>
+                        <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach

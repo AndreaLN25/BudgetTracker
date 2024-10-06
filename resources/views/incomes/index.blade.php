@@ -81,14 +81,15 @@
                             <td>{{ $income->description }}</td>
                             <td>{{ \Carbon\Carbon::parse($income->date)->format('d-m-Y') }}</td>
                             <td>
-                                <a href="{{ route('incomes.edit', $income->id) }}" class="btn btn-warning">Edit</a>
-                                <form action="{{ route('incomes.destroy', $income->id) }}" method="POST"
-                                    style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Are you sure you want to delete this income?')">Delete</button>
-                                </form>
+                                <div class="d-flex flex-column flex-md-row justify-content-center">
+                                    <a href="{{ route('incomes.edit', $income->id) }}" class="btn btn-warning btn-sm mb-2 mb-md-0 me-md-2 w-100 w-md-auto">Edit</a>
+                                    <form action="{{ route('incomes.destroy', $income->id) }}" method="POST" class="w-100 w-md-auto">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm w-100"
+                                            onclick="return confirm('Are you sure you want to delete this income?')">Delete</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
