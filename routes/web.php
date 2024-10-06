@@ -28,4 +28,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ratio', [DashboardController::class, 'showIncomeExpenseRatio'])->name('income_expense_ratio');
     Route::get('/incomes/category/{categoryId}', [DashboardController::class, 'showIncomesByCategory'])->name('incomes.byCategory');
     Route::get('/expenses/category/{categoryId}', [DashboardController::class, 'showExpensesByCategory'])->name('expenses.byCategory');
+    Route::get('/income-expense-details/{categoryId}', [DashboardController::class, 'showIncomeExpenseDetailsByCategory'])->name('income-expense.details');
 });

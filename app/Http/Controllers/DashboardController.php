@@ -68,7 +68,7 @@ class DashboardController extends Controller
         return $model::with('category')
             ->when($userId, fn($query) => $query->where('user_id', $userId))
             ->when($type, fn($query) => $query->whereHas('category', function ($q) use ($type) {
-                $q->where('type', $type);  
+                $q->where('type', $type);
             }))
             ->select('category_id', DB::raw('SUM(amount) as total'))
             ->groupBy('category_id')
@@ -168,24 +168,56 @@ class DashboardController extends Controller
 
     public function showIncomeExpenseRatio()
     {
+        $incomeCategories = Category::where('type', 'income')->get();
+        $expenseCategories = Category::where('type', 'expense')->get();
+
         $totalIncomes = Income::sum('amount');
         $totalExpenses = Expense::sum('amount');
 
-        return view('ratio.income_expense_ratio', compact('totalIncomes', 'totalExpenses'));
+        $incomesByCategory = [];
+        $expensesByCategory = [];
+
+        foreach ($incomeCategories as $category) {
+            $incomesByCategory[$category->id] = Income::where('category_id', $category->id)
+                ->with('user')
+                ->get();
+        }
+
+        foreach ($expenseCategories as $category) {
+            $expensesByCategory[$category->id] = Expense::where('category_id', $category->id)
+                ->with('user')
+                ->get();
+        }
+
+        return view('ratio.income_expense_ratio', compact('incomesByCategory', 'expensesByCategory', 'totalIncomes', 'totalExpenses'));
+    }
+
+    public function showIncomeExpenseDetailsByCategory($categoryId)
+    {
+        $incomes = $this->showIncomesByCategory($categoryId);
+
+        $expenses = $this->showExpensesByCategory($categoryId);
+
+        $details = [
+            'incomes' => $incomes->getData()->incomes,
+            'expenses' => $expenses->getData()->expenses,
+        ];
+
+        return view('income_expense_details', compact('details'));
     }
 
     public function showIncomesByCategory($categoryId)
-{
-    $incomes = Income::where('category_id', $categoryId)->get();
-    $category = Category::findOrFail($categoryId);
-    return view('incomes.by_category', compact('incomes', 'category'));
-}
+    {
+        $incomes = Income::where('category_id', $categoryId)->get();
+        $category = Category::findOrFail($categoryId);
+        return view('incomes.by_category', compact('incomes', 'category'));
+    }
 
-public function showExpensesByCategory($categoryId)
-{
-    $expenses = Expense::where('category_id', $categoryId)->get();
-    $category = Category::findOrFail($categoryId);
-    return view('expenses.by_category', compact('expenses', 'category'));
-}
-
+    public function showExpensesByCategory($categoryId)
+    {
+        $expenses = Expense::where('category_id', $categoryId)->get();
+        $category = Category::findOrFail($categoryId);
+        return view('expenses.by_category', compact('expenses', 'category'));
+    }
+    
 }
