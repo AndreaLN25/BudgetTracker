@@ -46,8 +46,11 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">Budget Tracker</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <i class="fas fa-wallet"></i> Budget Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -55,14 +58,20 @@
                     @if (Auth::check())
                         @if (!Auth::user()->isSuperAdmin())
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('incomes.index') }}">Incomes</a>
+                                <a class="nav-link" href="{{ route('incomes.index') }}">
+                                    <i class="fas fa-coins"></i> Incomes
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('expenses.index') }}">Expenses</a>
+                                <a class="nav-link" href="{{ route('expenses.index') }}">
+                                    <i class="fas fa-coins"></i> Expenses
+                                </a>
                             </li>
                         @endif
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ route('dashboard') }}">
+                                <i class="fas fa-chart-pie"></i> Dashboard
+                            </a>
                         </li>
                     @endif
                 </ul>
@@ -70,14 +79,20 @@
                 <ul class="navbar-nav">
                     @if (Auth::check())
                         <li class="nav-item">
-                            <button class="nav-link btn btn-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
+                            <button class="nav-link btn btn-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
                         </li>
                     @else
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login.store') }}">Login</a>
+                            <a class="nav-link" href="{{ route('login.store') }}">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register.store') }}">Register</a>
+                            <a class="nav-link" href="{{ route('register.store') }}">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
                         </li>
                     @endif
                 </ul>
