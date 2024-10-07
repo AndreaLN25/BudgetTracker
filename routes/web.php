@@ -13,6 +13,9 @@ Route::get('/', function () {
 
 Route::resource('users', UserController::class);
 
+Route::view('/privacy-policy', 'privacy-policy')->name('privacy.policy');
+Route::view('/terms-of-service', 'terms-of-service')->name('terms.service');
+
 Route::middleware(['auth', 'superadmin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/home', [DashboardController::class, 'home'])->name('admin.home');

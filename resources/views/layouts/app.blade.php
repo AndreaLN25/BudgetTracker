@@ -131,8 +131,8 @@
         <div class="container">
             <p class="mb-0">© 2024 Budget Tracker. All rights reserved.</p>
             <div class="footer-links">
-                <a href="#" class="text-decoration-none">Privacy Policy</a>
-                <a href="#" class="text-decoration-none">Terms of Service</a>
+                <a href="{{ route('privacy.policy') }}" class="text-decoration-none">Privacy Policy</a>
+                <a href="{{ route('terms.service') }}" class="text-decoration-none">Terms of Service</a>
             </div>
             <div class="mt-2">
                 <a href="https://github.com/AndreaLN25" class="text-dark me-2"><i class="fab fa-github"></i></a>
