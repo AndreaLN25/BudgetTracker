@@ -5,23 +5,28 @@
     <h1>Add Category</h1>
 
     <a href="{{ route('categories.index') }}" class="btn btn-secondary mb-3">Back to Categories</a>
-    <form action="{{ route('categories.store') }}" method="POST">
-        @csrf
 
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" required>
-        </div>
+    @if (Auth::check())
+        <form action="{{ route('categories.store') }}" method="POST">
+            @csrf
 
-        <div class="form-group">
-            <label for="type">Type</label>
-            <select class="form-control" name="type" required>
-                <option value="income">Income</option>
-                <option value="expense">Expense</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
 
-        <button type="submit" class="btn btn-success mt-3">Save</button>
-    </form>
+            <div class="form-group">
+                <label for="type">Type</label>
+                <select class="form-control" name="type" required>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">Save</button>
+        </form>
+    @else
+        <p>You must be logged in to add categories.</p>
+    @endif
 </div>
 @endsection

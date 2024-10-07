@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -22,20 +23,32 @@ class CategoryController extends Controller
 
     public function create()
     {
-        return view('categories.create');
+        if (Auth::check()) {
+            return view('categories.create');
+        } else {
+            return redirect()->route('categories.index')->with('error', 'Unauthorized');
+        }
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|string|in:income,expense',
-        ]);
+        if (Auth::check()) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'type' => 'required|string|in:income,expense',
+            ]);
 
-        Category::create($request->all());
+            $data = $request->all();
+            $data['user_id'] = Auth::id();
 
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+            Category::create($data);
+
+            return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        } else {
+            return redirect()->route('categories.index')->with('error', 'Unauthorized');
+        }
     }
+
 
     public function edit(Category $category)
     {
@@ -56,6 +69,9 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        if ($category->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
