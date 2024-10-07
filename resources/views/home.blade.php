@@ -41,7 +41,7 @@
                 <a href="{{ route('incomes.index') }}" class="card shadow-sm text-decoration-none border border-dark h-100">
                     <div class="card-body d-flex flex-column text-dark text-center">
                         <h5 class="card-title">View Incomes</h5>
-                        <p class="card-text">Monitor all income records</p>
+                        <p class="card-text">Keep track of all incomes</p>
                     </div>
                 </a>
             </div>
