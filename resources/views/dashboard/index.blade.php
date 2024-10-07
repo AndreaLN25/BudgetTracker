@@ -1,39 +1,35 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h1 class="mb-4">Dashboard</h1>
+<h1 class="mb-4">Dashboard</h1>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <a href="{{ route('incomes.index') }}" class="text-decoration-none">
-                <div class="card text-white bg-success">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Income</h5>
-                        <p class="card-text h2">${{ number_format($incomes, 2) }}</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <a href="{{ route('expenses.index') }}" class="text-decoration-none">
-                <div class="card text-white bg-danger">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Expenses</h5>
-                        <p class="card-text h2">${{ number_format($expenses, 2) }}</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card text-white {{ $balance >= 0 ? 'bg-info' : 'bg-warning' }}">
-                <div class="card-body">
-                    <h5 class="card-title">Balance</h5>
-                    <p class="card-text h2">${{ number_format($balance, 2) }}</p>
-                </div>
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <a href="{{ route('incomes.index') }}" class="card shadow-sm text-decoration-none border border-dark h-100">
+            <div class="card-body d-flex flex-column text-dark text-center">
+                <h5 class="card-title">Total Income</h5>
+                <p class="card-text h2">${{ number_format($incomes, 2) }}</p>
             </div>
-        </div>
+        </a>
     </div>
+    <div class="col-md-4 mb-4">
+        <a href="{{ route('expenses.index') }}" class="card shadow-sm text-decoration-none border border-dark h-100">
+            <div class="card-body d-flex flex-column text-dark text-center">
+                <h5 class="card-title">Total Expenses</h5>
+                <p class="card-text h2">${{ number_format($expenses, 2) }}</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4 mb-4">
+        <a href="{{ route('user.income-expense-details', ['id' => Auth::id()]) }}" class="card shadow-sm text-decoration-none border border-dark h-100">
+            <div class="card-body d-flex flex-column text-dark text-center">
+                <h5 class="card-title">Balance</h5>
+                <p class="card-text h2">${{ number_format($balance, 2) }}</p>
+            </div>
+        </a>
+    </div>
+</div>
+
 
     <div class="row mt-4">
         <div class="col-md-12">

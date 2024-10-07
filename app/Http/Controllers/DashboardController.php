@@ -57,7 +57,7 @@ class DashboardController extends Controller
             return view('admin.dashboard', array_merge([
                 'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels', 'incomeCategoryIds',
                 'expenseData', 'expenseLabels', 'expenseCategoryIds',
-                /* 'incomeTrends', 'expenseTrends', 'months', */ 'comparisonLabels' 
+                /* 'incomeTrends', 'expenseTrends', 'months', */ 'comparisonLabels'
             ], $adminDashboardData));
         }
 
@@ -235,5 +235,18 @@ class DashboardController extends Controller
         $category = Category::findOrFail($categoryId);
         return view('expenses.by_category', compact('expenses', 'category'));
     }
+
+    public function showUserIncomeExpenseDetails($userId)
+    {
+        $user = User::findOrFail($userId);
+        $categories = Category::all();
+
+        $incomes = $user->incomes;
+        $expenses = $user->expenses; 
+
+        return view('users.income_expense_details', compact('user', 'incomes', 'expenses', 'categories'));
+    }
+
+
 
 }
