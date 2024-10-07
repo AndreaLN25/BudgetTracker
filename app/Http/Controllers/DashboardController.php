@@ -29,26 +29,42 @@ class DashboardController extends Controller
         $expenseLabels = $expenseCategories->pluck('category.name')->toArray();
         $expenseCategoryIds = $expenseCategories->pluck('category_id')->toArray();
 
-        $monthlyIncomes = $this->getMonthlyData(Income::class, $userId);
-        $monthlyExpenses = $this->getMonthlyData(Expense::class, $userId);
+        $comparisonLabels = array_unique(array_merge(
+            $incomeCategories->pluck('category.name')->toArray(),
+            $expenseCategories->pluck('category.name')->toArray()
+        ));
 
-        $incomeTrends = $monthlyIncomes->pluck('total')->toArray();
-        $expenseTrends = $monthlyExpenses->pluck('total')->toArray();
-        $months = $monthlyIncomes->pluck('month')->toArray();
+        $incomeData = [];
+        $expenseData = [];
+
+        foreach ($comparisonLabels as $label) {
+            $incomeValue = $incomeCategories->where('category.name', $label)->first()->total ?? 0;
+            $expenseValue = $expenseCategories->where('category.name', $label)->first()->total ?? 0;
+
+            $incomeData[] = $incomeValue;
+            $expenseData[] = $expenseValue;
+        }
+
+        // $monthlyIncomes = $this->getMonthlyData(Income::class, $userId);
+        // $monthlyExpenses = $this->getMonthlyData(Expense::class, $userId);
+
+        // $incomeTrends = $monthlyIncomes->pluck('total')->toArray();
+        // $expenseTrends = $monthlyExpenses->pluck('total')->toArray();
+        // $months = $monthlyIncomes->pluck('month')->toArray();
 
         if (Auth::user()->isSuperAdmin()) {
             $adminDashboardData = $this->getAdminDashboardData();
             return view('admin.dashboard', array_merge([
                 'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels', 'incomeCategoryIds',
                 'expenseData', 'expenseLabels', 'expenseCategoryIds',
-                'incomeTrends', 'expenseTrends', 'months'
+                /* 'incomeTrends', 'expenseTrends', 'months', */ 'comparisonLabels' 
             ], $adminDashboardData));
         }
 
         return view('dashboard.index', compact(
             'incomes', 'expenses', 'balance', 'incomeData', 'incomeLabels', 'incomeCategoryIds',
             'expenseData', 'expenseLabels', 'expenseCategoryIds',
-            'incomeTrends', 'expenseTrends', 'months'
+            /* 'incomeTrends', 'expenseTrends', 'months', */ 'comparisonLabels'
         ));
     }
 
@@ -76,15 +92,15 @@ class DashboardController extends Controller
     }
 
 
-    private function getMonthlyData($model, $userId)
-    {
-        return $model::where('user_id', $userId)
-            ->select(DB::raw('DATE_FORMAT(date, "%Y-%m") as month'), DB::raw('SUM(amount) as total'))
-            ->where('date', '>=', now()->subMonths(6))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-    }
+    // private function getMonthlyData($model, $userId)
+    // {
+    //     return $model::where('user_id', $userId)
+    //         ->select(DB::raw('DATE_FORMAT(date, "%Y-%m") as month'), DB::raw('SUM(amount) as total'))
+    //         ->where('date', '>=', now()->subMonths(6))
+    //         ->groupBy('month')
+    //         ->orderBy('month')
+    //         ->get();
+    // }
 
     private function getAdminDashboardData()
     {
@@ -219,5 +235,5 @@ class DashboardController extends Controller
         $category = Category::findOrFail($categoryId);
         return view('expenses.by_category', compact('expenses', 'category'));
     }
-    
+
 }

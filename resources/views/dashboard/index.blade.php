@@ -63,12 +63,20 @@
         </div>
     </div>
 
-    <div class="row mt-5">
+    {{-- <div class="row mt-5">
         <div class="col-md-12">
             <h3>Trends Over Last 6 Months</h3>
             <canvas id="trendsChart"></canvas>
         </div>
+    </div> --}}
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>Comparison of Income and Expenses by Category</h3>
+            <canvas id="comparisonChart"></canvas>
+        </div>
     </div>
+
 
 </div>
 
@@ -127,7 +135,7 @@
 
 </script>
 
-<script>
+{{-- <script>
     const trendsCtx = document.getElementById('trendsChart').getContext('2d');
 
     const trendsData = {
@@ -162,6 +170,54 @@
             },
         }
     });
+</script> --}}
+
+<script>
+    const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+
+    const comparisonData = {
+        labels: @json($comparisonLabels),
+        datasets: [
+            {
+                label: 'Incomes',
+                data: @json($incomeData),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Expenses',
+                data: @json($expenseData),
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }
+        ]
+    };
+
+    const comparisonChart = new Chart(comparisonCtx, {
+        type: 'bar',
+        data: comparisonData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+            },
+            elements: {
+                bar: {
+                    borderWidth: 2,
+                },
+            }
+        }
+    });
 </script>
+
 
 @endsection
