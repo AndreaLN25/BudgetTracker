@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    .mt-250 {
-        margin-top: 200px;
-    }
-</style>
+
+<head>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
 
 <div class="jumbotron text-center {{ Auth::check() ? '' : 'mt-250' }}">
     @if(Auth::check())
