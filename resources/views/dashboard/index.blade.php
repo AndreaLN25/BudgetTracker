@@ -51,11 +51,21 @@
     <div class="row mt-5">
         <div class="col-md-6">
             <h3>Income Distribution by Category</h3>
-            <canvas id="incomeChart"></canvas>
+            @if(empty($incomeData) || count($incomeData) === 0)
+                <p>No income data available.</p>
+            @else
+                <canvas id="incomeChart"></canvas>
+            @endif
+
         </div>
         <div class="col-md-6">
             <h3>Expense Distribution by Category</h3>
-            <canvas id="expenseChart"></canvas>
+            @if(empty($expenseData) || count($expenseData) === 0)
+                <p>No expense data available.</p>
+            @else
+                <canvas id="expenseChart"></canvas>
+            @endif
+
         </div>
     </div>
 
@@ -69,7 +79,15 @@
     <div class="row mt-5">
         <div class="col-md-12">
             <h3>Comparison of Income and Expenses by Category</h3>
-            <canvas id="comparisonChart"></canvas>
+            @if((empty($incomeData) || count($incomeData) === 0) && (empty($expenseData) || count($expenseData) === 0))
+                <p>No income or expense data available for comparison.</p>
+            @elseif(empty($incomeData) || count($incomeData) === 0)
+                <p>No income data available for comparison.</p>
+            @elseif(empty($expenseData) || count($expenseData) === 0)
+                <p>No expense data available for comparison.</p>
+            @else
+                <canvas id="comparisonChart"></canvas>
+            @endif
         </div>
     </div>
 
