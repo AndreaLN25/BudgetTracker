@@ -9,7 +9,7 @@ body {
 nav {
     position: sticky;
     top: 0;
-    z-index: 1000;/
+    z-index: 1000;
 }
 
 footer {
@@ -33,4 +33,31 @@ footer {
 
 .mt-250 {
     margin-top: 200px;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #ffcc00 !important;
+}
+
+
+@media (min-width: 992px) {
+    .navbar .container-fluid {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .navbar-collapse {
+        display: flex;
+        justify-content: center;
+        flex-grow: 1;
+    }
+
+    .navbar-nav {
+        margin-left: 0;
+    }
+
+    .navbar-nav .nav-item {
+        margin-right: 2rem;
+    }
 }

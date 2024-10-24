@@ -12,7 +12,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
-        <div class="container">
+        <div class="container-fluid">
             <a class="navbar-brand" href="{{ url('/') }}">
                 <i class="fas fa-wallet"></i> Budget Tracker
             </a>
@@ -21,29 +21,31 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    @if (Auth::check())
-                        @if (!Auth::user()->isSuperAdmin())
+                <div class="d-flex justify-content-center flex-grow-1">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        @if (Auth::check())
+                            @if (!Auth::user()->isSuperAdmin())
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('incomes.index') }}">
+                                        <i class="fas fa-coins"></i> Incomes
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('expenses.index') }}">
+                                        <i class="fas fa-coins"></i> Expenses
+                                    </a>
+                                </li>
+                            @endif
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('incomes.index') }}">
-                                    <i class="fas fa-coins"></i> Incomes
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('expenses.index') }}">
-                                    <i class="fas fa-coins"></i> Expenses
+                                <a class="nav-link" href="{{ route('dashboard') }}">
+                                    <i class="fas fa-chart-pie"></i> Dashboard
                                 </a>
                             </li>
                         @endif
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">
-                                <i class="fas fa-chart-pie"></i> Dashboard
-                            </a>
-                        </li>
-                    @endif
-                </ul>
+                    </ul>
+                </div>
 
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto">
                     @if (Auth::check())
                         <li class="nav-item">
                             <button class="nav-link btn btn-link" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#logoutModal">
@@ -66,8 +68,6 @@
             </div>
         </div>
     </nav>
-
-
 
     <div class="container mt-4">
         @yield('content')
