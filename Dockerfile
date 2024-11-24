@@ -1,5 +1,5 @@
-# Usa una imagen base de PHP con Apache para Laravel
-FROM php:8.1-apache
+# Usa una imagen base de PHP con Apache para Laravel (versión 8.2)
+FROM php:8.2-apache
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git libxml2-dev
