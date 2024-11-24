@@ -1,69 +1,104 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
-    /**
-     * Display a listing of the expenses.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return Expense::all();
+        if (Auth::user()->isSuperAdmin()) {
+            $query = Expense::with('category','user');
+        } else {
+            $query = Expense::with('category','user')->where('user_id', Auth::id());
+        }
+
+        if ($request->filled('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->date);
+        }
+
+        if ($request->filled('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+
+        if ($request->filled('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        $expenses = $query->get();
+        $total = $expenses->sum('amount');
+
+        $categories = Category::where('type', 'expense')->get();
+
+        return view('expenses.index', compact('expenses', 'total', 'categories'));
     }
 
-    /**
-     * Store a newly created expense in storage.
-     */
+    public function create()
+    {
+        $categories = Category::where('type', 'expense')->get();
+        return view('expenses.create', compact('categories'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'date' => 'required|date',
         ]);
 
-        $expense = Expense::create($request->all());
+        Expense::create(array_merge($request->all(), ['user_id' => Auth::id()]));
 
-        return response()->json($expense, 201);
+        return redirect()->route('expenses.index')->with('success', 'Expense created successfully.');
     }
 
-    /**
-     * Display the specified expense.
-     */
-    public function show(Expense $expense)
+    public function edit(Expense $expense)
     {
-        return $expense;
+        if ($expense->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
+
+        $categories = Category::where('type', 'expense')->get();
+        return view('expenses.edit', compact('expense', 'categories'));
     }
 
-    /**
-     * Update the specified expense in storage.
-     */
     public function update(Request $request, Expense $expense)
     {
+        if ($expense->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
+
         $request->validate([
-            'category_id' => 'sometimes|exists:categories,id',
-            'amount' => 'sometimes|numeric',
-            'description' => 'sometimes|string',
-            'date' => 'sometimes|date',
+            'category_id' => 'required|exists:categories,id',
+            'amount' => 'required|numeric',
+            'description' => 'nullable|string',
+            'date' => 'required|date',
         ]);
 
-        $expense->update($request->only(['category_id', 'amount', 'description', 'date']));
+        $expense->update($request->all());
 
-        return response()->json($expense);
+        return redirect()->route('expenses.index')->with('success', 'Expense updated successfully.');
     }
 
-    /**
-     * Remove the specified expense from storage.
-     */
     public function destroy(Expense $expense)
     {
+        if ($expense->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
+
         $expense->delete();
-        return response()->json(null, 204);
+        return redirect()->route('expenses.index')->with('success', 'Expense deleted successfully.');
     }
 }

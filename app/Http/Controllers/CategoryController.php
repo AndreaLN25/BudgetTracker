@@ -4,62 +4,75 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the categories.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return Category::all();
+        $categories = Category::all();
+        $query = Category::query();
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $categories = $query->get();
+
+        return view('categories.index', compact('categories'));
     }
 
-    /**
-     * Store a newly created category in storage.
-     */
+    public function create()
+    {
+        if (Auth::check()) {
+            return view('categories.create');
+        } else {
+            return redirect()->route('categories.index')->with('error', 'Unauthorized');
+        }
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255',
-            'type' => 'required|in:expense,income', 
-        ]);
+        if (Auth::check()) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'type' => 'required|string|in:income,expense',
+            ]);
 
-        $category = Category::create($request->all());
+            $data = $request->all();
+            $data['user_id'] = Auth::id();
 
-        return response()->json($category, 201);
+            Category::create($data);
+
+            return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        } else {
+            return redirect()->route('categories.index')->with('error', 'Unauthorized');
+        }
     }
 
-    /**
-     * Display the specified category.
-     */
-    public function show(Category $category)
+
+    public function edit(Category $category)
     {
-        return $category;
+        return view('categories.edit', compact('category'));
     }
 
-    /**
-     * Update the specified category in storage.
-     */
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'type' => 'sometimes|in:expense,income',
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|in:income,expense',
         ]);
 
-        $category->update($request->only(['name', 'type']));
+        $category->update($request->all());
 
-        return response()->json($category);
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
-    /**
-     * Remove the specified category from storage.
-     */
     public function destroy(Category $category)
     {
+        if ($category->user_id !== Auth::id() && !Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
         $category->delete();
-        return response()->json(null, 204);
+        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
 }
